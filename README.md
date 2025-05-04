@@ -1,10 +1,10 @@
-# PR Approve Action
+# Approve PR Action
 
-[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/securefix-action/pr-approve-action/main/LICENSE) | [Versioning Policy](https://github.com/suzuki-shunsuke/versioning-policy/blob/main/POLICY.md)
+[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/securefix-action/approve-pr-action/main/LICENSE) | [Versioning Policy](https://github.com/suzuki-shunsuke/versioning-policy/blob/main/POLICY.md)
 
-`PR Approve Action` is a set of GitHub Actions to approve pull requests securely by [the Client/Server Model](https://github.com/securefix-action/client-server-model-docs).
+`Approve PR Action` is a set of GitHub Actions to approve pull requests securely by [the Client/Server Model](https://github.com/securefix-action/client-server-model-docs).
 
-PR Approve Action allows you to approve pull requests by Machine Users securely without sharing Machine Users' Personal Access Tokens (PAT) across GitHub Actions workflows.
+Approve PR Action allows you to approve pull requests by Machine Users securely without sharing Machine Users' Personal Access Tokens (PAT) across GitHub Actions workflows.
 It elevates the security of your workflows to the next level.
 
 ## Features
@@ -39,7 +39,7 @@ Coming soon.
 
 ## Actions
 
-PR Approve Action composes of following actions:
+Approve PR Action composes of following actions:
 
-- [securefix-action/pr-approve-action](docs/client.md) ([action.yaml](action.yaml)): Client action
-- [securefix-action/pr-approve-action/server](server) ([action.yaml](server/action.yaml)): Server action
+- [securefix-action/approve-pr-action](docs/client.md) ([action.yaml](action.yaml)): Client action
+- [securefix-action/approve-pr-action/server](server) ([action.yaml](server/action.yaml)): Server action
