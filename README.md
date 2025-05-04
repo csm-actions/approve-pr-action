@@ -31,11 +31,8 @@ This action allows you to protect PAT by [the Client/Server Model](https://githu
 
 ## Example
 
-Coming soon.
-
-## Getting Started
-
-Coming soon.
+- [Client Workflow](https://github.com/securefix-action/demo-client/blob/d1cfe0d6a24b6b62b4269ea9744b92f4a337b193/.github/workflows/approve.yaml#L10-L14)
+- [Server Workflow](https://github.com/securefix-action/demo-server/blob/b7b4368e855352e236fee2b9508ccd738704d225/.github/workflows/securefix.yaml#L42-L52)
 
 ## Actions
 

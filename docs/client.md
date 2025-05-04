@@ -18,8 +18,7 @@ Coming soon.
 
 ### Optional Inputs
 
-- `repository`: A repository name of the approved pull request. By default, the repository where the client workflow is run
-- `pull_request_number`: A pull request number of the approved pull request. By default, it's `${{github.event.pull_request.number}}`
+Nothing.
 
 ## Outputs
 
