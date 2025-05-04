@@ -6,7 +6,13 @@ Client Action creates and deletes a GitHub Issue label to request approving a pu
 
 ## Example
 
-Coming soon.
+```yaml
+- uses: securefix-action/approve-pr-action@2cdfc193f1817713909314429fd7a073c6f700ac # v0.0.1
+  with:
+    app_id: ${{vars.DEMO_CLIENT_APP_ID}}
+    app_private_key: ${{secrets.DEMO_CLIENT_PRIVATE_KEY}}
+    server_repository: demo-server
+```
 
 ## Inputs
 
