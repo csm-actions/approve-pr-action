@@ -33,7 +33,7 @@ outputs:
     description: |
       Whether the pull request is valid or not.
     value: ${{ steps.validate.outputs.valid }}
-  last_sha:
+  approved_sha:
     description: |
       The last commit SHA of the pull request.
     value: ${{ steps.validate.outputs.last_sha }}
