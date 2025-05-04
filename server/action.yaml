@@ -60,6 +60,11 @@ runs:
                           login
                         }
                       }
+                      author {
+                        user {
+                          login
+                        }
+                      }
                       signature {
                         isValid
                       }
@@ -93,16 +98,26 @@ runs:
           for (const payload of payloads) {
             for (const node of payload.data.repository.pullRequest.commits.nodes) {
               const commit = node.commit;
-              lastSHA = commit.oid;
+              const oid = commit.oid;
+              lastSHA = oid;
               if (!commit.signature || !commit.signature.isValid) {
-                core.setFailed(`commit signature must be valid: ${commit.oid}`);
+                core.setFailed(`commit signature must be valid: ${oid}`);
+                continue;
               }
-              const user = commit.committer.user;
-              if (!user) {
-                core.setFailed(`committer must not be null: ${node.commit.oid}`);
+              const committer = commit.committer.user;
+              const author = commit.author.user;
+              if (committer) {
+                if (!allowedCommitters.has(committer.login)) {
+                  core.setFailed(`the commit isn't allowed: committer=${committer.login} sha=${oid}`);
+                }
+                continue;
               }
-              if (!allowedCommitters.has(user.login)) {
-                core.setFailed(`the commit isn't allowed: committer=${user.login} sha=${node.commit.oid}`);
+              if (!author) {
+                core.setFailed(`Both committer and author are null: ${oid}`);
+                continue;
+              }
+              if (!allowedCommitters.has(author.login)) {
+                core.setFailed(`the commit isn't allowed: author=${author.login} sha=${oid}`);
               }
             }
           }
