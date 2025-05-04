@@ -4,7 +4,9 @@ inputs:
   allowed_committers:
     description: |
       A list of allowed committers.
-    required: true
+    required: false
+    default: |
+      renovate[bot]
   github_token:
     description: |
       GitHub Access token to approve pull requests.
