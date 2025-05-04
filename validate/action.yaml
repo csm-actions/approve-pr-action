@@ -3,7 +3,7 @@ description: Validate a pull request
 inputs:
   github_token:
     description: |
-      GitHub Access token to approve pull requests.
+      GitHub Access token to get a pull request.
       `pull_requests:read` and `contents:read` permissions are required.
     required: true
   pull_request_number:
