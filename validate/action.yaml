@@ -32,7 +32,7 @@ outputs:
   approved:
     description: |
       Whether the pull request is valid or not.
-    value: ${{ steps.validate.outputs.valid }}
+    value: ${{ steps.validate.outputs.approved }}
   approved_sha:
     description: |
       The last commit SHA of the pull request.
