@@ -111,7 +111,7 @@ runs:
     # Approve the pull request
     - shell: bash
       env:
-        GH_TOKEN: ${{ steps.token.outputs.token }}
+        GH_TOKEN: ${{ inputs.github_token }}
         REPO: ${{ steps.info.outputs.repo_full_name }}
         NUMBER: ${{ steps.info.outputs.pr_number }}
         SHA: ${{ steps.validate.outputs.last_sha }}
@@ -128,7 +128,7 @@ runs:
     - if: failure()
       shell: bash
       env:
-        GH_TOKEN: ${{ steps.token.outputs.token }}
+        GH_TOKEN: ${{ inputs.github_token }}
         REPO: ${{ steps.info.outputs.repo_full_name }}
         NUMBER: ${{ steps.info.outputs.pr_number }}
         COMMENT: |
