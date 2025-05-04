@@ -75,7 +75,7 @@ runs:
         } >> "$GITHUB_OUTPUT"
 
     # validate
-    - uses: actions/github-script@v7
+    - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       id: validate
       env:
         ALLOWED_COMMITTERS: ${{ inputs.allowed_committers }}
