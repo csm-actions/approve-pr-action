@@ -1,5 +1,5 @@
-name: Update Branch securely
-description: Update Branch securely
+name: Approve pull requests securely
+description: Approve pull requests securely
 author: Shunsuke Suzuki
 branding:
   icon: git-commit
@@ -43,7 +43,7 @@ runs:
 
     - uses: securefix-action/label-action@c6acf8ab33ab3b904781d7aabd39b72543791b88 # v0.0.2
       with:
-        prefix: update-branch-
+        prefix: approve-pr-
         description: ${{github.repository_owner}}/${{inputs.repository && inputs.repository || github.event.repository.name}}/${{inputs.pull_request_number}}
         repository: ${{inputs.server_repository}}
         github_token: ${{steps.token.outputs.token}}

@@ -2,7 +2,7 @@
 
 [action.yaml](action.yaml)
 
-Server Action updates branches.
+Server Action approves pull requests.
 
 ## Inputs
 
