@@ -1,6 +1,26 @@
-name: Approve Pull Requests
-description: Approve Pull Requests
+name: Validate a pull request
+description: Validate a pull request
 inputs:
+  github_token:
+    description: |
+      GitHub Access token to approve pull requests.
+      `pull_requests:read` and `contents:read` permissions are required.
+    required: true
+  pull_request_number:
+    description: |
+      A pull request number.
+    required: true
+
+  repository_owner:
+    description: |
+      A GitHub repository owner.
+    required: false
+    default: ${{ github.repository_owner }}
+  repository_name:
+    description: |
+      A GitHub repository name.
+    required: false
+    default: ${{ github.event.repository.name }}
   allowed_committers:
     description: |
       A list of allowed committers.
@@ -8,36 +28,26 @@ inputs:
     default: |
       renovate[bot]
       dependabot[bot]
-  github_token:
+outputs:
+  approved:
     description: |
-      GitHub Access token to approve pull requests.
-      `pull_requests:write` permission is required.
-    required: true
+      Whether the pull request is valid or not.
+    value: ${{ steps.validate.outputs.valid }}
+  last_sha:
+    description: |
+      The last commit SHA of the pull request.
+    value: ${{ steps.validate.outputs.last_sha }}
 runs:
   using: composite
   steps:
-    # Get data from the label
-    - id: info
-      shell: bash
-      env:
-        # ${repo}/${pull_request_number}
-        LABEL_DESCRIPTION: ${{ github.event.label.description }}
-      run: |
-        repo_full_name=${LABEL_DESCRIPTION%/*}
-        {
-          echo "repo_full_name=${repo_full_name}"
-          echo "repo=${repo_full_name#*/}"
-          echo "pr_number=${LABEL_DESCRIPTION##*/}"
-        } >> "$GITHUB_OUTPUT"
-
     # List commits and their authors
     - id: pr
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ inputs.github_token }}
-        REPO_OWNER: ${{ github.repository_owner }}
-        REPO_NAME: ${{ steps.info.outputs.repo }}
-        NUMBER: ${{ steps.info.outputs.pr_number }}
+        GH_TOKEN: ${{ inputs.github_token }}
+        REPO_OWNER: ${{ inputs.repository_owner }}
+        REPO_NAME: ${{ inputs.repository_name }}
+        NUMBER: ${{ inputs.pull_request_number }}
       run: |
         resp=$(gh api graphql \
           --paginate --slurp \
@@ -96,63 +106,36 @@ runs:
           // .[].data.repository.pullRequest.commits.nodes[].commit
           // oid, committer.user.login, signagture.isValid
           let lastSHA = "";
+          let approved = true;
           for (const payload of payloads) {
             for (const node of payload.data.repository.pullRequest.commits.nodes) {
               const commit = node.commit;
               const oid = commit.oid;
               lastSHA = oid;
               if (!commit.signature || !commit.signature.isValid) {
-                core.setFailed(`commit signature must be valid: ${oid}`);
+                core.warning(`skip approval as commit signature is invalid: ${oid}`);
+                approved = false;
                 continue;
               }
               const committer = commit.committer.user;
               const author = commit.author.user;
               if (committer) {
                 if (!allowedCommitters.has(committer.login)) {
-                  core.setFailed(`the commit isn't allowed: committer=${committer.login} sha=${oid}`);
+                  core.warning(`skip approval as the committer isn't allowed: committer=${committer.login} sha=${oid}`);
+                  approved = false;
                 }
                 continue;
               }
               if (!author) {
-                core.setFailed(`Both committer and author are null: ${oid}`);
+                core.warning(`skip approval as both committer and author are null: ${oid}`);
+                approved = false;
                 continue;
               }
               if (!allowedCommitters.has(author.login)) {
-                core.setFailed(`the commit isn't allowed: author=${author.login} sha=${oid}`);
+                core.warning(`skip approval as the commit author isn't allowed: author=${author.login} sha=${oid}`);
+                approved = false;
               }
             }
           }
+          core.setOutput('approved', approved);
           core.setOutput('last_sha', lastSHA);
-
-    # Approve the pull request
-    - shell: bash
-      env:
-        GH_TOKEN: ${{ inputs.github_token }}
-        REPO: ${{ steps.info.outputs.repo_full_name }}
-        NUMBER: ${{ steps.info.outputs.pr_number }}
-        SHA: ${{ steps.validate.outputs.last_sha }}
-      run: |
-        gh api \
-          --method POST \
-          -H "Accept: application/vnd.github+json" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          "/repos/$REPO/pulls/$NUMBER/reviews" \
-          -f "commit_id=$SHA" \
-          -f "event=APPROVE"
-
-    # Create a pull request comment to report an error
-    - if: failure()
-      shell: bash
-      env:
-        GH_TOKEN: ${{ inputs.github_token }}
-        REPO: ${{ steps.info.outputs.repo_full_name }}
-        NUMBER: ${{ steps.info.outputs.pr_number }}
-        COMMENT: |
-          ## :x: Failed to approve this pull request
-
-          [Workflow](${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}})
-      run: |
-        gh pr comment \
-          -R "$REPO" \
-          -b "${COMMENT}" \
-          "$NUMBER"
