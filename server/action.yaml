@@ -32,7 +32,6 @@ runs:
         } >> "$GITHUB_OUTPUT"
 
     - uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
-      if: steps.validate.outputs.approved == 'true'
       id: token
       with:
         app-id: ${{inputs.app_id}}
