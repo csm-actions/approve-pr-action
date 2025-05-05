@@ -18,7 +18,12 @@ It elevates the security of your workflows to the next level.
 
 ## Overview
 
-You want to merge some pull requests created by GitHub Apps like Renovate automatically.
+It would be convenient to automatically merge pull requests created by apps like Renovate.
+Manually reviewing and merging all of them can be time-consuming and labor-intensive.
+Tedious reviews can sometimes become mere formalities.
+This can lead to delayed updates and potentially troublesome issues.
+
+Of course, automatic merging comes with its own risks, but if the benefits of automation outweigh those risks, it’s a good idea to automatically merge at least some updates—excluding major updates, for example.
 
 But if approvals from codeowners are required by Branch Rulesets, you need to approve pull requests automatically.
 GitHub Apps can't be codeowners, so you need to approve pull requests using machine user's PAT.
@@ -28,6 +33,13 @@ So you must protect machine user's PAT securely.
 You shouldn't pass it to workflows widely.
 
 This action allows you to protect PAT by [the Client/Server Model](https://github.com/securefix-action/client-server-model-docs).
+
+This action intends to approve only pull requests created by reliable Apps automatically.
+This action doesn't approve pull requests unless they don't meet the following conditions:
+
+1. All commits are linked to GitHub Users
+1. All commits are signed
+1. All committers or authors are allowed in the input `allowed_committers` (By default, `allowed_committers` are `renovate[bot]` and `dependabot[bot]`)
 
 ## How To Set Up
 
@@ -51,4 +63,4 @@ This action allows you to protect PAT by [the Client/Server Model](https://githu
 Approve PR Action composes of following actions:
 
 - [securefix-action/approve-pr-action](action.yaml): Client action
-- [securefix-action/approve-pr-action/server](server/action.yaml) ([document](server/README.md)): Server action
+- [securefix-action/approve-pr-action/server](server/action.yaml): Server action
