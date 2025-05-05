@@ -39,6 +39,9 @@ This action allows you to protect PAT by [the Client/Server Model](https://githu
   - Repositories: client repositories
 - [Allow the server workflow to access the PAT securely](https://github.com/securefix-action/client-server-model-docs?tab=readme-ov-file#secret-management)
 - Create the server workflow: [Example](https://github.com/securefix-action/demo-server/blob/main/.github/workflows/approve.yaml)
+- Create a client GitHub App:
+  - Required Permissions: `issues:write` To create GitHub Issue labels
+  - Installed Repositories: client and server repositories
 - Run the client action in client worklfows: [Client Workflow](https://github.com/securefix-action/demo-client/blob/01b63503f3b1d0794b8fbaed118b603de5acfb1f/.github/workflows/approve.yaml#L14-L19)
 
 ## Actions
