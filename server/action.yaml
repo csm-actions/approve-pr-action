@@ -42,7 +42,7 @@ runs:
         repositories: |
           ${{steps.pr.outputs.repository_name}}
 
-    - uses: securefix-action/core-approve-pr-action/validate@26dd9ec571549a434c2731644bdbb495b688816c # v0.0.1
+    - uses: csm-actions/core-approve-pr-action/validate@26dd9ec571549a434c2731644bdbb495b688816c # v0.0.1
       id: validate
       with:
         github_token: ${{ steps.token.outputs.token }}
