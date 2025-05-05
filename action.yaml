@@ -13,37 +13,72 @@ inputs:
     description: |
       GitHub App Private Key
     required: true
-  server_repository:
+  server_repository_name:
     description: |
       Server repository name
     required: true
-
-  repository:
-    description: |
-      The repository name of the updated pull request
-    required: false
   pull_request_number:
     description: |
       The pull request number of the updated pull request
+    required: true
+
+  github_token:
+    description: |
+      GitHub token to read the pull request.
+      `contents: read` and `pull_requests:read` permissions are required.
     required: false
-    default: ${{github.event.issue.number}}
+    default: ${{ github.token }}
+  repository_name:
+    description: |
+      The repository name of the updated pull request
+    required: false
+    default: ${{ github.event.repository.name }}
+  repository_owner:
+    description: |
+      The repository owner of the updated pull request
+    required: false
+    default: ${{ github.repository_owner }}
+  server_repository_owner:
+    description: |
+      A server repository owner.
+    required: false
+    default: ${{ github.repository_owner }}
+  allowed_committers:
+    description: |
+      A list of allowed committers.
+    required: false
+    default: |
+      renovate[bot]
+      dependabot[bot]
 runs:
   using: composite
   steps:
+    - uses: securefix-action/core-approve-pr-action/validate@26dd9ec571549a434c2731644bdbb495b688816c # v0.0.1
+      id: validate
+      with:
+        github_token: ${{ inputs.github_token }}
+        pull_request_number: ${{ inputs.pull_request_number }}
+        repository_owner: ${{ inputs.repository_owner }}
+        repository_name: ${{ inputs.repository_name }}
+        allowed_committers: ${{ inputs.allowed_committers }}
+
     # Create a GitHub App token to create and delete a label
     - uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+      if: steps.validate.outputs.approved == 'true'
       id: token
       with:
         app-id: ${{inputs.app_id}}
         private-key: ${{inputs.app_private_key}}
         permission-issues: write
-        owner: ${{ github.repository_owner }}
+        owner: ${{ github.server_repository_owner }}
         repositories: |
-          ${{inputs.server_repository}}
+          ${{inputs.server_repository_name}}
 
     - uses: securefix-action/label-action@e882c05058dd13a9072a60980f490728cea7de1c # v0.1.0
+      if: steps.validate.outputs.approved == 'true'
       with:
         prefix: approve-pr-
-        description: ${{github.repository_owner}}/${{inputs.repository && inputs.repository || github.event.repository.name}}/${{inputs.pull_request_number}}
-        repository: ${{inputs.server_repository}}
+        description: ${{inputs.repository_owner}}/${{inputs.repository_name}}/${{inputs.pull_request_number}}
+        repository_owner: ${{inputs.server_repository_owner}}
+        repository_name: ${{inputs.server_repository_name}}
         github_token: ${{steps.token.outputs.token}}
