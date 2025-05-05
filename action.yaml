@@ -53,7 +53,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: securefix-action/core-approve-pr-action/validate@26dd9ec571549a434c2731644bdbb495b688816c # v0.0.1
+    - uses: csm-actions/core-approve-pr-action/validate@26dd9ec571549a434c2731644bdbb495b688816c # v0.0.1
       id: validate
       with:
         github_token: ${{ inputs.github_token }}
@@ -74,7 +74,7 @@ runs:
         repositories: |
           ${{inputs.server_repository_name}}
 
-    - uses: securefix-action/label-action@e882c05058dd13a9072a60980f490728cea7de1c # v0.1.0
+    - uses: csm-actions/label-action@e882c05058dd13a9072a60980f490728cea7de1c # v0.1.0
       if: steps.validate.outputs.approved == 'true'
       with:
         prefix: approve-pr-
