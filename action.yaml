@@ -41,7 +41,7 @@ runs:
         repositories: |
           ${{inputs.server_repository}}
 
-    - uses: securefix-action/label-action@c6acf8ab33ab3b904781d7aabd39b72543791b88 # v0.0.2
+    - uses: securefix-action/label-action@e882c05058dd13a9072a60980f490728cea7de1c # v0.1.0
       with:
         prefix: approve-pr-
         description: ${{github.repository_owner}}/${{inputs.repository && inputs.repository || github.event.repository.name}}/${{inputs.pull_request_number}}
