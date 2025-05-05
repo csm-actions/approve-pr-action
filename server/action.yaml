@@ -17,9 +17,9 @@ runs:
       run: |
         repo_full_name=${LABEL_DESCRIPTION%/*}
         {
-          echo "repo_owner=${repo_full_name%/*}"
-          echo "repo_name=${repo_full_name#*/}"
-          echo "pr_number=${LABEL_DESCRIPTION##*/}"
+          echo "repository_owner=${repo_full_name%/*}"
+          echo "repository_name=${repo_full_name#*/}"
+          echo "pull_request_number=${LABEL_DESCRIPTION##*/}"
         } >> "$GITHUB_OUTPUT"
 
     - uses: securefix-action/core-approve-pr-action/validate@main
