@@ -6,25 +6,6 @@ inputs:
       GitHub Access token to approve pull requests.
       `pull_requests:write` permission is required.
     required: true
-  pull_request_number:
-    description: |
-      A pull request number.
-    required: true
-  sha:
-    description: |
-      An approved commit SHA.
-    required: true
-
-  repository_owner:
-    description: |
-      A GitHub repository owner.
-    required: false
-    default: ${{ github.repository_owner }}
-  repository_name:
-    description: |
-      A GitHub repository name.
-    required: false
-    default: ${{ github.event.repository.name }}
 runs:
   using: composite
   steps:
