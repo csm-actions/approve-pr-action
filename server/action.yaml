@@ -6,6 +6,15 @@ inputs:
       GitHub Access token to approve pull requests.
       `pull_requests:write` permission is required.
     required: true
+  app_id:
+    description: |
+      GitHub App ID.
+      Permissions `pull_requests:read` and `contents:read` are required to validate pull requests.
+    required: true
+  app_private_key:
+    description: |
+      GitHub App Private Key
+    required: true
 runs:
   using: composite
   steps:
@@ -22,10 +31,22 @@ runs:
           echo "pull_request_number=${LABEL_DESCRIPTION##*/}"
         } >> "$GITHUB_OUTPUT"
 
+    - uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+      if: steps.validate.outputs.approved == 'true'
+      id: token
+      with:
+        app-id: ${{inputs.app_id}}
+        private-key: ${{inputs.app_private_key}}
+        permission-pull-requests: read
+        permission-contents: read
+        owner: ${{ steps.pr.outputs.repository_owner }}
+        repositories: |
+          ${{steps.pr.outputs.repository_name}}
+
     - uses: securefix-action/core-approve-pr-action/validate@26dd9ec571549a434c2731644bdbb495b688816c # v0.0.1
       id: validate
       with:
-        github_token: ${{ inputs.github_token }}
+        github_token: ${{ steps.token.outputs.token }}
         pull_request_number: ${{ steps.pr.outputs.pull_request_number }}
         repository_owner: ${{ steps.pr.outputs.repository_owner }}
         repository_name: ${{ steps.pr.outputs.repository_name }}

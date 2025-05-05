@@ -32,6 +32,9 @@ This action allows you to protect PAT by [the Client/Server Model](https://githu
 ## How To Set Up
 
 - Create a server repository
+- Create a server GitHub App:
+  - Required Permissions: `pull_requests:read` and `contents:read` To validate pull requests
+  - Installed Repositories: client and server repositories
 - Create a fine-grained PAT of a machine user
   - Required Permissions:
     - `pull_requests:write`: To approve pull requests
