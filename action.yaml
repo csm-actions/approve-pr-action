@@ -53,7 +53,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: securefix-action/core-approve-pr-action/validate@main
+    - uses: securefix-action/core-approve-pr-action/validate@26dd9ec571549a434c2731644bdbb495b688816c # v0.0.1
       id: validate
       with:
         github_token: ${{ inputs.github_token }}
