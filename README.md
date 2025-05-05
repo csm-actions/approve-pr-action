@@ -56,7 +56,7 @@ This action doesn't approve pull requests unless they don't meet the following c
 - Create a client GitHub App:
   - Required Permissions: `issues:write` To create GitHub Issue labels
   - Installed Repositories: client and server repositories
-- Run the client action in client workflows: [Example](https://github.com/securefix-action/demo-client/blob/01b63503f3b1d0794b8fbaed118b603de5acfb1f/.github/workflows/approve.yaml#L14-L19)
+- Run the client action in client workflows: [Example](https://github.com/securefix-action/demo-client/blob/c46ce73ffdaa83af182d733a382d5dc051d3b994/.github/workflows/approve.yaml#L11-L20)
 
 ## Actions
 
