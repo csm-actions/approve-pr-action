@@ -29,10 +29,17 @@ You shouldn't pass it to workflows widely.
 
 This action allows you to protect PAT by [the Client/Server Model](https://github.com/securefix-action/client-server-model-docs).
 
-## Example
+## How To Set Up
 
-- [Client Workflow](https://github.com/securefix-action/demo-client/blob/01b63503f3b1d0794b8fbaed118b603de5acfb1f/.github/workflows/approve.yaml#L14-L19)
-- [Server Workflow](https://github.com/securefix-action/demo-server/blob/main/.github/workflows/approve.yaml)
+- Create a server repository
+- Create a fine-grained PAT of a machine user
+  - Required Permissions:
+    - `pull_requests:write`: To approve pull requests
+    - `contents:read`: To validate pull requests
+  - Repositories: client repositories
+- [Allow the server workflow to access the PAT securely](https://github.com/securefix-action/client-server-model-docs?tab=readme-ov-file#secret-management)
+- Create the server workflow: [Example](https://github.com/securefix-action/demo-server/blob/main/.github/workflows/approve.yaml)
+- Run the client action in client worklfows: [Client Workflow](https://github.com/securefix-action/demo-client/blob/01b63503f3b1d0794b8fbaed118b603de5acfb1f/.github/workflows/approve.yaml#L14-L19)
 
 ## Actions
 
