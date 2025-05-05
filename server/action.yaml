@@ -28,13 +28,34 @@ inputs:
 runs:
   using: composite
   steps:
-    # Approve the pull request
-    - shell: bash
+    - id: pr
+      shell: bash
+      env:
+        # ${repo}/${pull_request_number}
+        LABEL_DESCRIPTION: ${{ github.event.label.description }}
+      run: |
+        repo_full_name=${LABEL_DESCRIPTION%/*}
+        {
+          echo "repo_owner=${repo_full_name%/*}"
+          echo "repo_name=${repo_full_name#*/}"
+          echo "pr_number=${LABEL_DESCRIPTION##*/}"
+        } >> "$GITHUB_OUTPUT"
+
+    - uses: securefix-action/core-approve-pr-action/validate@main
+      id: validate
+      with:
+        github_token: ${{ inputs.github_token }}
+        pull_request_number: ${{ steps.pr.outputs.pull_request_number }}
+        repository_owner: ${{ steps.pr.outputs.repository_owner }}
+        repository_name: ${{ steps.pr.outputs.repository_name }}
+
+    - if: steps.validate.outputs.approved == 'true'
+      shell: bash
       env:
         GH_TOKEN: ${{ inputs.github_token }}
-        REPO: ${{ inputs.repository_owner }}/${{ inputs.repository_name }}
-        NUMBER: ${{ inputs.pull_request_number }}
-        SHA: ${{ inputs.sha }}
+        REPO: ${{ steps.pr.outputs.repository_owner }}/${{ steps.pr.outputs.repository_name }}
+        NUMBER: ${{ steps.pr.outputs.pull_request_number }}
+        SHA: ${{ steps.validate.outputs.approved_sha }}
       run: |
         gh api \
           --method POST \
@@ -49,8 +70,8 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github_token }}
-        REPO: ${{ inputs.repository_owner }}/${{ inputs.repository_name }}
-        NUMBER: ${{ inputs.pull_request_number }}
+        REPO: ${{ steps.pr.outputs.repository_owner }}/${{ steps.pr.outputs.repository_name }}
+        NUMBER: ${{ steps.pr.outputs.pull_request_number }}
         COMMENT: |
           ## :x: Failed to approve this pull request
 
