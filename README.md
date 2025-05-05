@@ -38,7 +38,6 @@ This action allows you to protect PAT by [the Client/Server Model](https://githu
 - Create a fine-grained PAT of a machine user
   - Required Permissions:
     - `pull_requests:write`: To approve pull requests
-    - `contents:read`: To validate pull requests
   - Repositories: client repositories
 - [Allow the server workflow to access the PAT securely](https://github.com/securefix-action/client-server-model-docs?tab=readme-ov-file#secret-management)
 - Create the server workflow: [Example](https://github.com/securefix-action/demo-server/blob/main/.github/workflows/approve.yaml)
