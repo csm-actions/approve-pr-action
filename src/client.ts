@@ -11,10 +11,8 @@ export const action = async () => {
   });
   const serverRepositoryOwner =
     core.getInput("server_repository_owner") || github.context.repo.owner;
-  const owner =
-    core.getInput("repository_owner") || github.context.repo.owner;
-  const repo =
-    core.getInput("repository_name") || github.context.repo.repo;
+  const owner = core.getInput("repository_owner") || github.context.repo.owner;
+  const repo = core.getInput("repository_name") || github.context.repo.repo;
   const pullRequestNumber = Number(
     core.getInput("pull_request_number", { required: true }),
   );
@@ -22,7 +20,10 @@ export const action = async () => {
 
   const allowedCommittersInput = core.getInput("allowed_committers").trim();
   const allowedCommitters = allowedCommittersInput
-    ? allowedCommittersInput.split("\n").map((s) => s.trim()).filter((s) => s.length > 0)
+    ? allowedCommittersInput
+        .split("\n")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0)
     : ["renovate[bot]", "dependabot[bot]"];
 
   // Validate PR using the provided github_token

@@ -82,7 +82,9 @@ const QUERY = `
   }
 `;
 
-export const validate = async (input: ValidateInput): Promise<ValidateResult> => {
+export const validate = async (
+  input: ValidateInput,
+): Promise<ValidateResult> => {
   const allowedSet = new Set(input.allowedCommitters);
   let endCursor: string | null = null;
   let approved = true;

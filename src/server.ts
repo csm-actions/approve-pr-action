@@ -56,7 +56,10 @@ export const action = async () => {
   // Validate PR
   const allowedCommittersInput = core.getInput("allowed_committers").trim();
   const allowedCommitters = allowedCommittersInput
-    ? allowedCommittersInput.split("\n").map((s) => s.trim()).filter((s) => s.length > 0)
+    ? allowedCommittersInput
+        .split("\n")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0)
     : ["renovate[bot]", "dependabot[bot]"];
 
   const result = await validate({
