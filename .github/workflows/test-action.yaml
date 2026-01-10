@@ -12,6 +12,7 @@ jobs:
         with:
           persist-credentials: false
 
+      # Client mode (with server_repository_name)
       - uses: ./
         with:
           app_id: dummy
@@ -19,20 +20,9 @@ jobs:
           server_repository_name: demo-server
           pull_request_number: 1
 
-      - uses: ./parse-label
-        id: pr
-      - uses: ./validate
-        id: validate
+      # Server mode (without server_repository_name)
+      - uses: ./
         with:
+          app_id: dummy
+          app_private_key: dummy
           github_token: xxx
-          pull_request_number: ${{ steps.pr.outputs.pull_request_number }}
-          repository_owner: ${{ steps.pr.outputs.repository_owner }}
-          repository_name: ${{ steps.pr.outputs.repository_name }}
-      - uses: ./approve
-        if: steps.validate.outputs.approved == 'true'
-        with:
-          github_token: xxx
-          pull_request_number: ${{ steps.pr.outputs.pull_request_number }}
-          repository_owner: ${{ steps.pr.outputs.repository_owner }}
-          repository_name: ${{ steps.pr.outputs.repository_name }}
-          sha: ${{ steps.validate.outputs.approved_sha }}

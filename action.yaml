@@ -13,36 +13,42 @@ inputs:
     description: |
       GitHub App Private Key
     required: true
+
+  # For Client
   server_repository_name:
     description: |
-      Server repository name
-    required: true
-  pull_request_number:
-    description: |
-      The pull request number of the updated pull request
-    required: true
-
-  github_token:
-    description: |
-      GitHub token to read the pull request.
-      `contents: read` and `pull_requests:read` permissions are required.
+      Server repository name.
+      Required for client mode.
     required: false
-    default: ${{ github.token }}
-  repository_name:
-    description: |
-      The repository name of the updated pull request
-    required: false
-    default: ${{ github.event.repository.name }}
-  repository_owner:
-    description: |
-      The repository owner of the updated pull request
-    required: false
-    default: ${{ github.repository_owner }}
   server_repository_owner:
     description: |
-      A server repository owner.
+      Server repository owner.
     required: false
-    default: ${{ github.repository_owner }}
+    default: ${{github.repository_owner}}
+  repository_owner:
+    description: |
+      The repository owner of the pull request to approve.
+    required: false
+    default: ${{github.repository_owner}}
+  repository_name:
+    description: |
+      The repository name of the pull request to approve.
+    required: false
+    default: ${{github.event.repository.name}}
+  pull_request_number:
+    description: |
+      The pull request number to approve.
+      Required for client mode.
+    required: false
+
+  # For both Client and Server
+  github_token:
+    description: |
+      GitHub token.
+      For client: used to read the pull request (`contents:read` and `pull_requests:read` permissions required).
+      For server: used to approve the pull request (`pull_requests:write` permission required).
+    required: false
+    default: ${{github.token}}
   allowed_committers:
     description: |
       A list of allowed committers.
@@ -51,34 +57,6 @@ inputs:
       renovate[bot]
       dependabot[bot]
 runs:
-  using: composite
-  steps:
-    - uses: csm-actions/core-approve-pr-action/validate@2bfb2a4f082938741ac6b722e3d2e6e9436c2803 # v0.0.2
-      id: validate
-      with:
-        github_token: ${{ inputs.github_token }}
-        pull_request_number: ${{ inputs.pull_request_number }}
-        repository_owner: ${{ inputs.repository_owner }}
-        repository_name: ${{ inputs.repository_name }}
-        allowed_committers: ${{ inputs.allowed_committers }}
-
-    # Create a GitHub App token to create and delete a label
-    - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
-      if: steps.validate.outputs.approved == 'true'
-      id: token
-      with:
-        app-id: ${{inputs.app_id}}
-        private-key: ${{inputs.app_private_key}}
-        permission-issues: write
-        owner: ${{ github.server_repository_owner }}
-        repositories: |
-          ${{inputs.server_repository_name}}
-
-    - uses: csm-actions/label-action@e882c05058dd13a9072a60980f490728cea7de1c # v0.1.0
-      if: steps.validate.outputs.approved == 'true'
-      with:
-        prefix: approve-pr-
-        description: ${{inputs.repository_owner}}/${{inputs.repository_name}}/${{inputs.pull_request_number}}
-        repository_owner: ${{inputs.server_repository_owner}}
-        repository_name: ${{inputs.server_repository_name}}
-        github_token: ${{steps.token.outputs.token}}
+  using: "node20"
+  main: "dist/index.js"
+  post: "dist/index.js"

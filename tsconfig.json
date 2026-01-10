@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "rootDir": "./src",
+    "strict": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "lib": ["ES2021.String"]
+  },
+  "exclude": ["node_modules", "**/*.test.ts"]
+}
