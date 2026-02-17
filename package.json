@@ -5,7 +5,7 @@
     "fmt": "prettier --write ."
   },
   "dependencies": {
-    "@actions/core": "2.0.3",
+    "@actions/core": "3.0.0",
     "@actions/github": "6.0.1",
     "@csm-actions/label": "npm:@jsr/csm-actions__label@^0.0.6",
     "@octokit/rest": "^22.0.0",
