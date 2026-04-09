@@ -17,7 +17,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{github.token}}
       - run: aqua upc -prune
+      - run: nllint -v
+        env:
+          GITHUB_TOKEN: ${{github.token}}
       - run: git ls-files | xargs nllint -f -s
-      - run: |
+      - run: pinact -v
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+      - env:
+          PINACT_GITHUB_TOKEN: ${{github.token}}
+        run: |
           git ls-files | grep -E '\.md$' | xargs pinact run -u
       - uses: autofix-ci/action@7a166d7532b277f34e16238930461bf77f9d7ed8 # v1.3.3
