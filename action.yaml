@@ -57,6 +57,6 @@ inputs:
       renovate[bot]
       dependabot[bot]
 runs:
-  using: "node20"
-  main: "dist/index.js"
-  post: "dist/index.js"
+  using: node24
+  main: dist/index.js
+  post: dist/index.js
