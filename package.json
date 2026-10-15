@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "build": "ncc build src/index.ts --license LICENSE",
-    "fmt": "prettier --write ."
+    "fmt": "npm ci --prefix .github/prettier --no-audit --no-fund && .github/prettier/node_modules/.bin/prettier --write ."
   },
   "dependencies": {
     "@actions/core": "3.0.1",
