@@ -55,7 +55,8 @@ This action doesn't approve pull requests unless they don't meet the following c
 - Create the server workflow: [Example](https://github.com/csm-actions/demo-server/blob/main/.github/workflows/approve.yaml)
 - Create a client GitHub App:
   - Required Permissions: `issues:write` To create GitHub Issue labels
-  - Installed Repositories: client and server repositories
+  - Installed Repositories: only the server repository
+    - You don't need to install it into client repositories, because client workflows create labels only in the server repository
 - Run the client action in client workflows: [Example](https://github.com/csm-actions/demo-client/blob/c46ce73ffdaa83af182d733a382d5dc051d3b994/.github/workflows/approve.yaml#L11-L20)
 
 ## Private keys in AWS KMS
