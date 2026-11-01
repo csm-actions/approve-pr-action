@@ -1,6 +1,20 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
+/**
+ * Parses allowed committers separated by newlines.
+ * The default is renovate[bot] and dependabot[bot].
+ */
+export const parseAllowedCommitters = (input: string): string[] => {
+  const trimmed = input.trim();
+  return trimmed
+    ? trimmed
+        .split("\n")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0)
+    : ["renovate[bot]", "dependabot[bot]"];
+};
+
 export type ValidateInput = {
   octokit: ReturnType<typeof github.getOctokit>;
   owner: string;
