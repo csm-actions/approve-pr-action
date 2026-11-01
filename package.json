@@ -10,7 +10,8 @@
   "dependencies": {
     "@actions/core": "3.0.1",
     "@actions/github": "9.1.1",
-    "@csm-actions/label": "npm:@jsr/csm-actions__label@^0.1.0",
+    "@csm-actions/dispatch": "npm:@jsr/csm-actions__dispatch@^0.1.1",
+    "@csm-actions/label": "npm:@jsr/csm-actions__label@^0.1.1",
     "@octokit/auth-app": "^8.3.1",
     "@octokit/rest": "^22.0.0",
     "@suzuki-shunsuke/actions-aws-oidc": "npm:@jsr/suzuki-shunsuke__actions-aws-oidc@^0.2.0",

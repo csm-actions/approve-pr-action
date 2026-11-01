@@ -3,31 +3,37 @@ import * as github from "@actions/github";
 import * as githubAppToken from "@suzuki-shunsuke/github-app-token";
 import { parseAllowedCommitters, validate } from "./validate";
 import { newAppOctokit } from "./app_octokit";
+import {
+  parseLabelDescription,
+  readDispatchInputs,
+  type Request,
+  validateRef,
+} from "./request";
 
-export const parseLabelDescription = (
-  description: string,
-): { owner: string; repo: string; prNumber: number } => {
-  // Format: "owner/repo/pr_number"
-  const parts = description.split("/");
-  if (parts.length !== 3) {
-    throw new Error(
-      `Invalid label description format: ${description}. Expected format: owner/repo/pr_number`,
+/**
+ * Reads the pull request to approve.
+ *
+ * When the server workflow is run by a workflow_dispatch event, it's read from
+ * the inputs of the event, which the client action sets.
+ * Otherwise it's read from the label of the labels:created event.
+ */
+const readRequest = (): Request => {
+  if (github.context.eventName === "workflow_dispatch") {
+    validateRef(
+      github.context.ref,
+      github.context.payload.repository?.default_branch,
     );
+    return readDispatchInputs(github.context.payload.inputs);
   }
-  return {
-    owner: parts[0],
-    repo: parts[1],
-    prNumber: Number(parts[2]),
-  };
-};
-
-export const action = async () => {
   const labelDescription = github.context.payload.label?.description;
   if (!labelDescription) {
     throw new Error("Label description is not found in the event payload");
   }
+  return parseLabelDescription(labelDescription);
+};
 
-  const { owner, repo, prNumber } = parseLabelDescription(labelDescription);
+export const action = async () => {
+  const { owner, repo, prNumber } = readRequest();
 
   // Create GitHub App token for validation (pull_requests:read, contents:read)
   const permissions: githubAppToken.Permissions = {
