@@ -2,6 +2,9 @@
   "type": "module",
   "scripts": {
     "build": "ncc build src/index.ts --license LICENSE",
+    "typecheck": "tsc --noEmit",
+    "lint": "npm run typecheck",
+    "test": "vitest --run",
     "fmt": "npm ci --prefix .github/prettier --no-audit --no-fund && .github/prettier/node_modules/.bin/prettier --write ."
   },
   "dependencies": {
@@ -17,6 +20,7 @@
   "devDependencies": {
     "@types/node": "24.19.2",
     "@vercel/ncc": "0.45.0",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
   }
 }

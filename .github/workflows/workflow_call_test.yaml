@@ -18,6 +18,15 @@ jobs:
       version: pr/${{github.event.pull_request.number}}
       pr: ${{github.event.pull_request.number}}
 
+  # npm run lint (type check) and npm test
+  test-js:
+    uses: suzuki-shunsuke/js-action-test-workflow/.github/workflows/test.yaml@c834a7dfc9560fb54167eaf33f94eb28f1a4e222 # v0.0.4
+    permissions:
+      contents: read
+      id-token: write
+    secrets:
+      TAKUMI_GUARD_BOT_ID: ${{secrets.TAKUMI_GUARD_BOT_ID}}
+
   test-workflow:
     uses: suzuki-shunsuke/test-workflow/.github/workflows/test.yaml@0b89b9b4314282810bc944364380568708208eaa # v0.0.2
     with:

@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 import * as label from "@csm-actions/label";
-import { validate } from "./validate";
+import { parseAllowedCommitters, validate } from "./validate";
 import { newAppOctokit } from "./app_octokit";
 
 export const action = async () => {
@@ -17,13 +17,9 @@ export const action = async () => {
   );
   const githubToken = core.getInput("github_token", { required: true });
 
-  const allowedCommittersInput = core.getInput("allowed_committers").trim();
-  const allowedCommitters = allowedCommittersInput
-    ? allowedCommittersInput
-        .split("\n")
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0)
-    : ["renovate[bot]", "dependabot[bot]"];
+  const allowedCommitters = parseAllowedCommitters(
+    core.getInput("allowed_committers"),
+  );
 
   // Validate PR using the provided github_token
   const octokit = github.getOctokit(githubToken);
