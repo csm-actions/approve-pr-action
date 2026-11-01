@@ -1,10 +1,10 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 import * as githubAppToken from "@suzuki-shunsuke/github-app-token";
-import { validate } from "./validate";
+import { parseAllowedCommitters, validate } from "./validate";
 import { newAppOctokit } from "./app_octokit";
 
-const parseLabelDescription = (
+export const parseLabelDescription = (
   description: string,
 ): { owner: string; repo: string; prNumber: number } => {
   // Format: "owner/repo/pr_number"
@@ -54,13 +54,9 @@ export const action = async () => {
   const octokit = github.getOctokit(token.token);
 
   // Validate PR
-  const allowedCommittersInput = core.getInput("allowed_committers").trim();
-  const allowedCommitters = allowedCommittersInput
-    ? allowedCommittersInput
-        .split("\n")
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0)
-    : ["renovate[bot]", "dependabot[bot]"];
+  const allowedCommitters = parseAllowedCommitters(
+    core.getInput("allowed_committers"),
+  );
 
   const result = await validate({
     octokit,
