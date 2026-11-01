@@ -20,7 +20,7 @@ export const action = async () => {
   const repo = core.getInput("repository_name") || github.context.repo.repo;
   const pullRequestNumber = parsePRNumber(
     "pull_request_number",
-    core.getInput("pull_request_number", { required: true }).trim(),
+    core.getInput("pull_request_number", { required: true }),
   );
   // Validate the workflow ref before validating the pull request.
   const workflowRef = serverWorkflowRef
@@ -47,7 +47,9 @@ export const action = async () => {
   });
 
   if (!result.approved) {
-    core.info("PR validation failed, skipping label creation");
+    core.info(
+      "PR validation failed, skipping the request to the server workflow",
+    );
     return;
   }
 

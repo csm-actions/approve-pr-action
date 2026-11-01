@@ -52,6 +52,7 @@ jobs:
   with:
     app_id: ${{ vars.CLIENT_APP_ID }}
     app_private_key: ${{ secrets.CLIENT_PRIVATE_KEY }}
+    pull_request_number: ${{ github.event.pull_request.number }}
     # <owner>/<repo>/.github/workflows/<workflow file>@<branch or tag>
     server_workflow_ref: ${{ vars.APPROVE_PR_SERVER_WORKFLOW_REF }}
 ```

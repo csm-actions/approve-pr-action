@@ -64,7 +64,7 @@ This action doesn't approve pull requests unless they don't meet the following c
 There are two ways to trigger the server workflow:
 
 - `workflow_dispatch` (v1.1.0): The client workflow runs the server workflow by [the workflow_dispatch API](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event). The Client GitHub App requires `actions:write`. Set the input `server_workflow_ref` to use this
-- label: The client workflow creates an issue label in the server repository, and the server workflow is triggered by the `label:created` event. The Client GitHub App requires `issues:write`. Set the input `server_repository_name` to use this
+- label: The client workflow creates an issue label in the server repository, and the server workflow is triggered by the `label` event (`types: [created]`). The Client GitHub App requires `issues:write`. Set the input `server_repository_name` to use this
 
 We recommend `workflow_dispatch`:
 
