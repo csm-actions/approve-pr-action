@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/suzuki-shunsuke/pinact/main/json-schema/pinact.json
+version: 3
+ignore_actions:
+  # Examples in documents use csm-actions/approve-pr-action@latest, which can't be pinned
+  - name: csm-actions/approve-pr-action
+    ref: latest

@@ -52,12 +52,67 @@ This action doesn't approve pull requests unless they don't meet the following c
     - `pull_requests:write`: To approve pull requests
   - Repositories: client repositories
 - [Allow the server workflow to access the PAT securely](https://github.com/csm-actions/docs?tab=readme-ov-file#secret-management)
-- Create the server workflow: [Example](https://github.com/csm-actions/demo-server/blob/main/.github/workflows/approve.yaml)
+- Create the server workflow: [Example](https://github.com/csm-actions/demo-server/blob/main/.github/workflows/approve_dispatch.yaml)
 - Create a client GitHub App:
-  - Required Permissions: `issues:write` To create GitHub Issue labels
+  - Required Permissions: `actions:write` To run the server workflow by `workflow_dispatch`
   - Installed Repositories: only the server repository
-    - You don't need to install it into client repositories, because client workflows create labels only in the server repository
-- Run the client action in client workflows: [Example](https://github.com/csm-actions/demo-client/blob/c46ce73ffdaa83af182d733a382d5dc051d3b994/.github/workflows/approve.yaml#L11-L20)
+    - You don't need to install it into client repositories, because client workflows run the server workflow only in the server repository
+- Run the client action in client workflows with `server_workflow_ref`: [Example](https://github.com/csm-actions/demo-client/blob/main/.github/workflows/approve.yaml)
+
+## How to trigger the server workflow
+
+There are two ways to trigger the server workflow:
+
+- `workflow_dispatch` (v1.1.0): The client workflow runs the server workflow by [the workflow_dispatch API](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event). The Client GitHub App requires `actions:write`. Set the input `server_workflow_ref` to use this
+- label: The client workflow creates an issue label in the server repository, and the server workflow is triggered by the `label:created` event. The Client GitHub App requires `issues:write`. Set the input `server_repository_name` to use this
+
+We recommend `workflow_dispatch`:
+
+- No label needs to be created just to trigger the server workflow
+- The client action outputs a link to the server workflow run
+- Parameters are passed as workflow inputs instead of a label description
+
+The Client GitHub App is installed into only the server repository, so `actions:write` is limited to the server repository.
+[But `actions:write` allows more than running workflows, and the server workflow must run only on the default branch.](#workflow_dispatch-and-actionswrite)
+
+If you use labels now, see [the migration guide](docs/migrate-to-workflow-dispatch.md).
+
+> [!NOTE]
+> We don't use `repository_dispatch` because creating a repository_dispatch event requires `contents:write`.
+> `contents:write` of the server repository would let clients rewrite the server workflow.
+
+## Security
+
+### workflow_dispatch and actions:write
+
+`actions:write` of the server repository doesn't allow clients to change the server repository's code or read secrets, so the risk is much lower than granting `contents:write` to clients.
+But it allows more than running workflows:
+
+- Disable and enable workflows (DoS of the server workflow)
+- Cancel and re-run workflow runs
+- Delete workflow runs and logs
+- Delete artifacts and caches
+
+The private key of the Client GitHub App is shared widely, so anyone who can write to a client repository should be assumed to be able to do these.
+We consider these acceptable as long as secrets, especially the PAT to approve pull requests, are available only on the default branch of the server repository and the default branch is protected properly.
+
+#### Run the server workflow only on the default branch
+
+A label event always runs the workflow on the default branch, but `workflow_dispatch` lets clients choose any branch or tag of the server repository.
+If an old branch or tag has a vulnerable server workflow, it could be run.
+
+- The server action fails if the event is `workflow_dispatch` and `github.ref` isn't the default branch. Note that this check runs in the workflow on the dispatched ref, so it doesn't protect a branch or tag whose workflow uses an older action or doesn't use the action at all. The following measures are enforced outside the workflow, so use them too
+- Restrict the deployment branches of the environment to the default branch
+- If secrets are managed in AWS (e.g. the private key in AWS KMS), restrict the access by OIDC claims. When the job uses an environment, the `sub` claim doesn't include the ref, so customize the subject claim to include `job_workflow_ref`, for instance
+
+#### Re-run
+
+`actions:write` allows re-running server workflow runs.
+A re-run uses the workflow at the same commit as the original run, and both the deployment branch policy of the environment and `job_workflow_ref` see only the branch name.
+So even after a vulnerability of the server workflow is fixed, re-running a run from before the fix runs the old workflow (re-runs are allowed within 30 days).
+When you fix a vulnerability of the server workflow, delete the server workflow runs from before the fix.
+
+Re-running an old server run also approves the pull request again only if it still passes the validation, because the server action validates the pull request every time.
 
 ## Private keys in AWS KMS
 
