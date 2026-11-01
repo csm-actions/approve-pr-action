@@ -52,10 +52,20 @@ inputs:
     required: false
 
   # For Client
+  server_workflow_ref:
+    description: |
+      The server workflow to run by a workflow_dispatch event,
+      in the format <owner>/<repo>/.github/workflows/<workflow file>@<branch or tag>.
+      e.g. my-org/approve-pr-server/.github/workflows/approve.yaml@main
+      If this is set, the action runs in client mode and runs the server workflow by a workflow_dispatch event instead of creating a label.
+      The client GitHub App requires the actions:write permission of the server repository.
+    required: false
   server_repository_name:
     description: |
       Server repository name.
-      Required for client mode.
+      If this is set, the action runs in client mode and creates a label in this repository to trigger the server workflow.
+      It can be omitted when server_workflow_ref is set.
+      If both are set, server_repository_owner and server_repository_name must point to the same repository as server_workflow_ref.
     required: false
   server_repository_owner:
     description: |

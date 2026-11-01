@@ -23,11 +23,13 @@ export const main = async () => {
   }
   core.saveState("post", "true");
 
-  // Route based on server_repository_name input
-  // If present: client mode (validate and create label)
-  // If absent: server mode (parse label, validate, approve)
-  const serverRepositoryName = core.getInput("server_repository_name");
-  if (serverRepositoryName) {
+  // Route based on server_repository_name and server_workflow_ref inputs
+  // If either is present: client mode (validate and send a request)
+  // Otherwise: server mode (read the request, validate, approve)
+  if (
+    core.getInput("server_repository_name") ||
+    core.getInput("server_workflow_ref")
+  ) {
     await client.action();
   } else {
     await server.action();
